@@ -1,0 +1,22 @@
+# Use Node.js LTS image as the base image
+FROM node:lts
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+# Install development dependencies including NestJS CLI
+RUN yarn add --dev @nestjs/cli ts-node
+
+# Copy the source code into the container
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3001
+
+# Run the NestJS application in development mode
+CMD [ "yarn", "start:dev" ]

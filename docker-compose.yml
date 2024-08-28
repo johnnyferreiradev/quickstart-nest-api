@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_DB=${DB_DATABASE}
+    container_name: postgres-quickstart-nest-api
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  app:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE}
+    container_name: nest-docker-postgres-quickstart-nest-api
+    environment:
+      - PORT=3001
+      - DB_HOST=${DB_HOST}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
+      - ENV=${ENV}
+      - JWT_SECRET=${JWT_SECRET}
+      - SUPERUSER_NAME=${SUPERUSER_NAME}
+      - SUPERUSER_USERNAME=${SUPERUSER_USERNAME}
+      - SUPERUSER_PASSWORD=${SUPERUSER_PASSWORD}
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+    volumes:
+      - ./src:/usr/src/app/src
+      - /usr/src/app/node_modules
+    command: yarn start:dev
